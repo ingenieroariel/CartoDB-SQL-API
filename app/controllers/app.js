@@ -295,15 +295,6 @@ function handleQuery(req, res) {
                 }
             },
             function setDBGetUser(err, data) {
-                if (err) {
-                  // If the database could not be found, the user is non-existant
-                  if ( err.message.match('missing') ) {
-                    err.message = "Sorry, we can't find CartoDB user '" + cdbuser
-                      + "'. Please check that you have entered the correct domain.";
-                    err.http_status = 404;
-                  }
-                  throw err;
-                }
                 if ( req.profiler ) req.profiler.done('getDatabaseName');
 
                 database = (data === "" || _.isNull(data) || _.isUndefined(data)) ? database : data;
@@ -335,9 +326,6 @@ function handleQuery(req, res) {
                 if ( req.profiler ) req.profiler.done('getUserDBHost');
 
                 dbopts.host = data || global.settings.db_host;
-
-                // by-pass redis lookup for password if not authenticated
-                if ( ! authenticated ) return null;
 
                 Meta.getUserDBPass(cdbuser, this);
             },
